@@ -24,7 +24,7 @@ services:
         expose:
           - 80
         volumes:
-          - ./sitio1/calculadora-react:/usr/share/nginx/html
+          - ./sitio1:/usr/share/nginx/html
         networks:
           - proxy-net
       
@@ -52,7 +52,7 @@ services:
       - proxy-net
   
   clicks-counter:
-    build: ./sitio3/clicks-counter/.
+    build: ./sitio3/.
     container_name: react-app
     restart: always
     expose:
@@ -61,7 +61,7 @@ services:
       - proxy-net
   
   task-manager:
-    build: ./sitio4/task-manager/.
+    build: ./sitio4/.
     container_name: task-manager
     restart: always
     expose:
