@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  rev-proxy:
+    image: nginx:latest
+    container_name: proxy
+    ports:
+      - 80:80
+      - 8080:8080
+      - 8081:8081
+      - 33016:3306
+      - 8082:8082
+      - 8083:8083
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./stream.conf:/etc/nginx/stream.conf
+    networks:
+      - proxy-net
+
+  site-a:
+        image: nginx
+        restart: always
+        container_name: site-a
+        expose:
+          - 80
+        volumes:
+          - ./sitio1/calculadora-react:/usr/share/nginx/html
+        networks:
+          - proxy-net
+      
+  site-b:
+        image: httpd
+        restart: always
+        container_name: site-b
+        expose:
+          - 80
+        volumes:
+          - ./sitio2/index.html:/usr/local/apache2/htdocs/index.html
+        networks:
+          - proxy-net
+
+  db: 
+    image: mysql:latest
+    container_name: db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=supersecret
+      - MYSQL_DATABASE=escuela_db
+    expose:
+      - 3306
+    networks:
+      - proxy-net
+  
+  clicks-counter:
+    build: ./sitio3/clicks-counter/.
+    container_name: react-app
+    restart: always
+    expose:
+      - 3000
+    networks:
+      - proxy-net
+  
+  task-manager:
+    build: ./sitio4/task-manager/.
+    container_name: task-manager
+    restart: always
+    expose:
+      - 3000
+    networks:
+      - proxy-net
+
+networks:
+  proxy-net:
+    driver: bridge
+    
